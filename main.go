@@ -3,25 +3,12 @@ package main
 import (
 	"net/http"
 	"html/template"
-	"os"
 )
 
 type userInfo struct {
 	FirstName string
 	LastName string
 	Email string
-}
-
-func loadTemplate() *template.Template {
-	data, err := os.ReadFile("index.html")
-	if err != nil {
-		panic(err)
-	}
-	t, err := template.New("html").Parse(string(data))
-	if err != nil {
-		panic(err)
-	}
-	return t;
 }
 
 func indexHandler(t *template.Template, info *userInfo) func(http.ResponseWriter, *http.Request) {
@@ -70,7 +57,7 @@ func infoViewHandler(t *template.Template, info *userInfo) func(http.ResponseWri
 
 func main() {
 	info := &userInfo{"Joe", "Blow", "jow@blow.com"}
-	t := loadTemplate()
+	t := template.Must(template.ParseFiles("index.html"))
 	http.HandleFunc("/", indexHandler(t, info))
 	http.HandleFunc("/contact/1/edit", editHandler(t, info))
 	http.HandleFunc("/contact/1", infoViewHandler(t, info))
